@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django_with_statsd
+spec:
+  replicas: 1
+
+  template:
+    metadata:
+      labels:
+        service: django_with_statsd
+    spec:
+      containers:
+      - name: statsd-exporter
+        image: prom/statsd-exporter:latest
+        args:
+        - --statsd.listen-udp=":8125"
+          --statsd.mapping-config=/usr/src/app/statsd.conf
+        resources: {}
+
+      - name: django_sample_project
+        image: ankitnayan/django_sample_project:latest
+
+      restartPolicy: Always
+
+status: {}

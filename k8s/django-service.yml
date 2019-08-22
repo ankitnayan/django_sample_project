@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: django_with_statsd
+  name: django_with_statsd
+spec:
+  ports:
+  - protocol: UDP
+    port: 8125
+    name: statsd-metrics-udp
+  - protocol: TCP
+    port: 9125
+    name: statsd-metrics-tcp
+  - protocol: TCP
+    port: 9102
+    name: prometheus-metrics
+  - protocol: TCP
+    port: 8000
+    name: django-app
+  selector:
+    service: django_with_statsd
