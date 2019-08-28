@@ -1,26 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: django_with_statsd
+  name: django-with-statsd
+  labels:
+    service: django-with-statsd
 spec:
-  replicas: 1
-
+  replicas: 2
+  selector:
+    matchLabels:
+      service: django-with-statsd
   template:
     metadata:
       labels:
-        service: django_with_statsd
+        service: django-with-statsd
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '9102'
+        prometheus.io/path: '/metrics'
+
     spec:
       containers:
       - name: statsd-exporter
         image: prom/statsd-exporter:latest
         args:
-        - --statsd.listen-udp=":8125"
-          --statsd.mapping-config=/usr/src/app/statsd.conf
-        resources: {}
+        - --log.level=info
 
-      - name: django_sample_project
-        image: ankitnayan/django_sample_project:latest
+      - name: django-sample-project
+        image: ankitnayan/django_sample_project:log_format_changed
 
       restartPolicy: Always
-
-status: {}
