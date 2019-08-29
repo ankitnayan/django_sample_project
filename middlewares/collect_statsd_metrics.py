@@ -11,17 +11,16 @@ else:
 
 statsd = DogStatsd(host="localhost", port=9125)
 
-REQUEST_LATENCY_METRIC_NAME = 'request_latency_seconds'
-REQUEST_COUNT_METRIC_NAME = 'request_count'
+REQUEST_LATENCY_METRIC_NAME = 'django_request_latency_seconds'
+REQUEST_COUNT_METRIC_NAME = 'django_request_count'
 
 
 class StatsdMetricsMiddleware(MiddlewareMixin):
 
     def process_request(self, request):
 
-        #request.prometheus_before_middleware_event = time.time()
-        print("I am before all middlewares")
-
+        request.start_time = time.time()
+        
 
     def process_response(self, request, response):
 
@@ -33,6 +32,18 @@ class StatsdMetricsMiddleware(MiddlewareMixin):
                 'status:%s' % str(response.status_code)
                 ]
         )
-        print("I am after all middlewares")
+
+        resp_time = (time.time() - request.start_time)*1000
+        
+        #print(resp_time)
+
+        statsd.histogram(REQUEST_LATENCY_METRIC_NAME,
+                resp_time,
+                tags=[
+                    'service:django_sample_project',
+                    'endpoint: %s' % request.path,
+                    ]
+        )
+
         return response
 

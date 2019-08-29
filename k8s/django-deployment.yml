@@ -22,10 +22,11 @@ spec:
       containers:
       - name: statsd-exporter
         image: prom/statsd-exporter:latest
-        args:
-        - --log.level=info
+        # args:
+        # - --log.level=info
+        # - --statsd.event-flush-interval=16s
 
       - name: django-sample-project
-        image: ankitnayan/django_sample_project:log_format_changed
+        image: ankitnayan/django_sample_project:quantiles_v1
 
       restartPolicy: Always
