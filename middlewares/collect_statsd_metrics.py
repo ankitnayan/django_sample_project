@@ -41,7 +41,7 @@ class StatsdMetricsMiddleware(MiddlewareMixin):
                 resp_time,
                 tags=[
                     'service:django_sample_project',
-                    'endpoint: %s' % request.path,
+                    'endpoint:%s' % request.path,
                     ]
         )
 
