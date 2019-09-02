@@ -22,11 +22,25 @@ spec:
       containers:
       - name: statsd-exporter
         image: prom/statsd-exporter:latest
-        # args:
-        # - --log.level=info
-        # - --statsd.event-flush-interval=16s
+        args:
+        - '--log.level=info'
+        - '--statsd.mapping-config=/etc/config/statsd-mapping.conf'
+        #- --statsd.event-flush-interval=16s
 
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/config/
+ 
       - name: django-sample-project
         image: ankitnayan/django_sample_project:quantiles_v1
+
+
+      volumes:
+      - name: config-volume
+        configMap:
+          name: statsd-mapping-config
+          items:
+          - key: statsd-mapping.conf
+            path: statsd-mapping.conf
 
       restartPolicy: Always
