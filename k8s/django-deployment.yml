@@ -1,46 +1,35 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: django-with-statsd
+  name: django-test-project
   labels:
-    service: django-with-statsd
+    service: django-test-project
 spec:
   replicas: 2
   selector:
     matchLabels:
-      service: django-with-statsd
+      service: django-test-project
   template:
     metadata:
       labels:
-        service: django-with-statsd
-      annotations:
-        prometheus.io/scrape: 'true'
-        prometheus.io/port: '9102'
-        prometheus.io/path: '/metrics'
+        service: django-test-project
 
     spec:
-      containers:
-      - name: statsd-exporter
-        image: prom/statsd-exporter:latest
-        args:
-        - '--log.level=info'
-        - '--statsd.mapping-config=/etc/config/statsd-mapping.conf'
-        #- --statsd.event-flush-interval=16s
-
-        volumeMounts:
-        - name: config-volume
-          mountPath: /etc/config/
- 
-      - name: django-sample-project
-        image: ankitnayan/django_sample_project:quantiles_v1
-
-
-      volumes:
-      - name: config-volume
-        configMap:
-          name: statsd-mapping-config
-          items:
-          - key: statsd-mapping.conf
-            path: statsd-mapping.conf
-
+      containers: 
+      - name: django-test-project
+        image: ankitnayan/django-test-project:v0.10
+        imagePullPolicy: Always
+        env:
+          - name: NODE_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
       restartPolicy: Always

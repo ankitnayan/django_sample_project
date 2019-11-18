@@ -1,0 +1,1 @@
+kubectl create configmap statsd-mapping-config --from-file=statsd-mapping.conf=config/statsd-mapping.conf
