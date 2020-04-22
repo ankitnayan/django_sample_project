@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+import requests
 
 from django.http import HttpResponse, HttpResponseNotFound
 
@@ -8,7 +8,8 @@ import numpy as np
 import time
 
 from .models import Post
-
+from django_sample_project.tracer import get_tracer
+tracer = get_tracer()
 
 mu, sigma = 0.8, 0.2 # mean and standard deviation
 s = np.random.normal(mu, sigma, 100)
@@ -44,9 +45,18 @@ def send_2xx(request):
     # db.commit()
     # db.close()
 
+
     post_obj = Post.objects.create(title="I am title", text="I am text")
     result = post_obj.id
 
+    resp = requests.get("http://localhost:8080/")
+    # print(resp.text)
+
+    if tracer:
+        with tracer.start_span('TestSpan') as span:
+            span.log_kv({'event': 'test message', 'life': 42})
+    else:
+        print ("\n\n**** Error: Tracer not found. Jaeger should be there ******\n\n")
 
     # db = create_engine('sqlite:///tutorial.db')
 
@@ -98,7 +108,7 @@ def send_2xx(request):
     # result = x.text
 
     # import redis
-    # r = redis.Redis(host='localhost', port=6379, db=0)
+    # r = redis.Redis(host='localhost', port=6379)
     # r.set('foo', 'bar')
 
     # import pymongo

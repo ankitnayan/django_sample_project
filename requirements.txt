@@ -1,4 +1,8 @@
 Django==2.2.4
 gunicorn==19.9.0
 numpy==1.17.1
-git+https://github.com/ankitnayan/signoz-python-sensor.git
+# git+https://github.com/ankitnayan/signoz-python-sensor.git
+# git+https://github.com/jaegertracing/jaeger-client-python.git#egg=jaeger-client
+# git+https://github.com/DataDog/dd-trace-py.git#egg=dd-trace
+requests
+git+https://github.com/ankitnayan/sn-trace-py.git#egg=sntrace

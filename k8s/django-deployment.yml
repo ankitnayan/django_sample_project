@@ -5,7 +5,7 @@ metadata:
   labels:
     service: django-test-project
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       service: django-test-project
@@ -17,19 +17,20 @@ spec:
     spec:
       containers: 
       - name: django-test-project
-        image: ankitnayan/django-test-project:v0.10
+        image: ankitnayan/django-test-project:v0.13
         imagePullPolicy: Always
         env:
           - name: NODE_IP
             valueFrom:
               fieldRef:
                 fieldPath: status.hostIP
-          - name: POD_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
-          - name: POD_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
+          - name: AUTOWRAPT_BOOTSTRAP
+            value: signoz
+          - name: APP_NAME
+            value: test_app
+          - name: JAEGER_AGENT_HOST
+            value: jaeger-agent
+          - name: JAEGER_SERVICE_NAME
+            value: test_app
+
       restartPolicy: Always

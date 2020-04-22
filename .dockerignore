@@ -1,4 +1,4 @@
-*.pyc
-./load-test
 __pycache__
 .vscode
+k8s
+load-test
